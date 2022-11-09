@@ -75,6 +75,81 @@ app.get("/services/:id", async (req, res) => {
     }
 });
 
+app.post("/addservice", async (req, res) => {
+    try {
+        const service = req.body;
+        const result = await Services.insertOne(service);
+
+        res.send({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+
+
+// reviews api
+app.get("/reviews", async (req, res) => {
+    try {
+        let query = {};
+
+        if (req.query.service) {
+            query = {
+                service: req.query.service
+            }
+        }
+
+        const cursor = Reviews.find(query);
+        const reviews = await cursor.toArray();
+
+        // console.log(reviews);
+
+        res.send({
+            success: true,
+            data: reviews,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+
+
+app.get("/myreviews", async (req, res) => {
+    try {
+        let query = {};
+
+        if (req.query.email) {
+            query = {
+                email: req.query.email
+            }
+        }
+
+        const cursor = Reviews.find(query);
+        const reviews = await cursor.toArray();
+
+        // console.log(reviews);
+
+        res.send({
+            success: true,
+            data: reviews,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+
+
 
 app.post("/reviews", async (req, res) => {
     try {
