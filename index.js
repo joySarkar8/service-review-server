@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 require('dotenv').config();
 
@@ -16,46 +16,63 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function dbConnect() {
     try {
-      await client.connect();
-      console.log("Database connected");
+        await client.connect();
+        console.log("Database connected");
     } catch (error) {
-      console.log(error.name, error.message);
+        console.log(error.name, error.message);
     }
-  }
-  dbConnect();
+}
+dbConnect();
 
-  const Services = client.db("reviewService").collection("services");
+const Services = client.db("reviewService").collection("services");
 
-  app.get("/services", async (req, res) => {
+app.get("/services", async (req, res) => {
     try {
-      const cursor = Services.find({});
-      
-      const req = 3;
-      
-      if (req === 3) {
-          const services = await cursor.limit(3).toArray();
-          res.send({
-            success: true,
-            message: "Successfully got the data",
-            data: services,
-          });
-      }else{
-        const services = await cursor.toArray();
-          res.send({
-            success: true,
-            message: "Successfully got the data",
-            data: services,
-          });
-      }
+        const query = req.query.limit;
+        const cursor = Services.find({});
+
+        if (query == 3) {
+            const services = await cursor.limit(3).toArray();
+            res.send({
+                success: true,
+                message: "Successfully got the data",
+                data: services,
+            });
+        } else {
+            const services = await cursor.toArray();
+            res.send({
+                success: true,
+                message: "Successfully got the data",
+                data: services,
+            });
+        }
 
     } catch (error) {
-      console.log(error.name, error.message);
-      res.send({
-        success: false,
-        error: error.message,
-      });
+        console.log(error.name, error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        });
     }
-  });
+});
+
+app.get("/services/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const service = await Services.findOne(query);
+
+        res.send({
+            success: true,
+            data: service,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
 
 
 
