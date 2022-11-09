@@ -168,7 +168,24 @@ app.post("/reviews", async (req, res) => {
     }
 });
 
-
+app.delete('/myreviews/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await Reviews.deleteOne(query);
+        
+        
+        res.send({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+})
 
 
 
