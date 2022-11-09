@@ -25,6 +25,7 @@ async function dbConnect() {
 dbConnect();
 
 const Services = client.db("reviewService").collection("services");
+const Reviews = client.db("reviewService").collection("reviews");
 
 app.get("/services", async (req, res) => {
     try {
@@ -65,6 +66,24 @@ app.get("/services/:id", async (req, res) => {
         res.send({
             success: true,
             data: service,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+
+
+app.post("/reviews", async (req, res) => {
+    try {
+        const review = req.body;
+        const result = await Reviews.insertOne(review);
+
+        res.send({
+            success: true,
+            data: result,
         });
     } catch (error) {
         res.send({
