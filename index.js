@@ -26,6 +26,7 @@ dbConnect();
 
 const Services = client.db("reviewService").collection("services");
 const Reviews = client.db("reviewService").collection("reviews");
+const Blogs = client.db("reviewService").collection("blogs");
 
 app.get("/services", async (req, res) => {
     try {
@@ -47,6 +48,29 @@ app.get("/services", async (req, res) => {
                 data: services,
             });
         }
+
+    } catch (error) {
+        console.log(error.name, error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+app.get("/blogs", async (req, res) => {
+    try {
+        const query = {};
+        const cursor = Blogs.find(query);
+
+       
+            const blogs = await cursor.toArray();
+            res.send({
+                success: true,
+                message: "Successfully got the data",
+                data: blogs,
+            });
+
+        
 
     } catch (error) {
         console.log(error.name, error.message);
