@@ -62,15 +62,15 @@ app.get("/blogs", async (req, res) => {
         const query = {};
         const cursor = Blogs.find(query);
 
-       
-            const blogs = await cursor.toArray();
-            res.send({
-                success: true,
-                message: "Successfully got the data",
-                data: blogs,
-            });
 
-        
+        const blogs = await cursor.toArray();
+        res.send({
+            success: true,
+            message: "Successfully got the data",
+            data: blogs,
+        });
+
+
 
     } catch (error) {
         console.log(error.name, error.message);
@@ -145,6 +145,25 @@ app.get("/reviews", async (req, res) => {
     }
 });
 
+app.get("/reviews/:id", async (req, res) => {
+
+    try {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const review = await Reviews.findOne(query);
+
+        res.send({
+            success: true,
+            data: review,
+        });
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+});
+
 
 app.get("/myreviews", async (req, res) => {
     try {
@@ -192,13 +211,40 @@ app.post("/reviews", async (req, res) => {
     }
 });
 
+app.patch('/myreviews/:id', async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const query = { _id: ObjectId(id) }
+        const result = await Reviews.updateOne(query, { $set: req.body });
+
+        if (result.matchedCount) {
+            res.send({
+                success: true,
+                message: 'successfully updated',
+            });
+        } else {
+            res.send({
+                success: false,
+                error: "Couldn't update  the product",
+            });
+        }
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
+
+})
+
 app.delete('/myreviews/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
         const result = await Reviews.deleteOne(query);
-        
-        
+
+
         res.send({
             success: true,
             data: result,
